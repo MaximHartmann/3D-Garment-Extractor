@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+*.obj
+*.ply
+*.mtl
+output/
+data/
+test_imgs/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+weights/
+checkpoints/
