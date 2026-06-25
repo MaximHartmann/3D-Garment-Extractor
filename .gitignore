@@ -7,7 +7,6 @@ __pycache__/
 *.mtl
 output/
 data/
-test_imgs/
 *.pt
 *.pth
 *.ckpt
@@ -15,3 +14,4 @@ test_imgs/
 *.bin
 weights/
 checkpoints/
+src/gaussian-opacity-fields/submodules/diff-gaussian-rasterization/third_party/glm/
