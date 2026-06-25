@@ -7,6 +7,7 @@ singularity exec --nv docker://pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel bash 
     export CPATH=\$PWD/src/gaussian-opacity-fields/submodules/diff-gaussian-rasterization/third_party/glm:\$CPATH
     pip install -e src/gaussian-opacity-fields/submodules/diff-gaussian-rasterization/ --no-build-isolation
     pip install -e src/gaussian-opacity-fields/submodules/simple-knn/ --no-build-isolation
+    pip install pycuda
 "
 source .venv/bin/activate
 python download_models.py

@@ -1088,23 +1088,19 @@ def generate_tsdf_mesh(subj_base_path, normal_checkpoint_path, quality='high'):
     verts, faces, norms, colors = tsdf_vol.get_mesh()
     outfile = os.path.join(subj_base_path, f'tsdf-rgbd.ply')
 
-    import open3d as o3d
-    o3d_mesh = o3d.geometry.TriangleMesh()
-    o3d_mesh.vertices = o3d.utility.Vector3dVector(verts)
-    o3d_mesh.triangles = o3d.utility.Vector3iVector(faces)
+    import trimesh
+    print("Clean Mesh (with trimesh)")
+    
     if outfile.endswith('.ply'):
-        colors = colors.astype(np.float32) / 255.
-    o3d_mesh.vertex_colors = o3d.utility.Vector3dVector(colors)
-
-    print("Clean Mesh")
-    triangle_clusters, cluster_n_triangles, cluster_area = o3d_mesh.cluster_connected_triangles()
-    triangle_clusters = np.asarray(triangle_clusters)
-    cluster_n_triangles = np.asarray(cluster_n_triangles)
-
-    triangles_to_remove = cluster_n_triangles[triangle_clusters] < 100000
-    o3d_mesh.remove_triangles_by_mask(triangles_to_remove)
-    o3d_mesh.remove_unreferenced_vertices()
-
-    o3d_mesh_smpl = o3d_mesh.simplify_quadric_decimation(500000)
-    o3d.io.write_triangle_mesh(outfile, o3d_mesh_smpl)
+        colors = (colors * 255).astype(np.uint8) if colors.max() <= 1.0 else colors.astype(np.uint8)
+        
+    mesh = trimesh.Trimesh(vertices=verts, faces=faces, vertex_colors=colors)
+    
+    components = mesh.split(only_watertight=False)
+    if len(components) > 0:
+        components = sorted(components, key=lambda c: len(c.faces), reverse=True)
+        mesh = components[0]
+        
+    print(f"Exporting mesh to {outfile}")
+    mesh.export(outfile)
 

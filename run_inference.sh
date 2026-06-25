@@ -4,3 +4,12 @@ singularity exec --nv docker://pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel bash 
     export PYTHONPATH=\$PWD/.venv/lib/python3.10/site-packages:\$PYTHONPATH
     python src/Human3Diffusion/infer.py --test_imgs test_imgs --output output
 "
+
+echo "Starting TSDF mesh extraction"
+
+singularity exec --nv docker://pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel bash -c "
+    export PYTHONPATH=\$PWD/.venv/lib/python3.10/site-packages:\$PYTHONPATH
+    python src/Human3Diffusion/infer_mesh.py --test_imgs test_imgs --output output --mesh_quality low
+"
+
+echo "Done!"
