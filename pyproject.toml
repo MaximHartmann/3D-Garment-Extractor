@@ -20,5 +20,9 @@ dependencies = [
     "scipy==1.15.3",
     "einops",
     "omegaconf",
-    "onnxruntime"
+    "onnxruntime",
+    "kiui==0.3.4",
+    "kornia==0.8.2",
+    "objprint==0.3.0",
+    "tyro==1.0.15"
 ]

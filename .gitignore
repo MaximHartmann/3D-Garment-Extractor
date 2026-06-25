@@ -15,3 +15,4 @@ data/
 weights/
 checkpoints/
 src/gaussian-opacity-fields/submodules/diff-gaussian-rasterization/third_party/glm/
+src/gaussian-opacity-fields/submodules/diff-gaussian-rasterization/diff_gaussian_rasterization.egg-info/
