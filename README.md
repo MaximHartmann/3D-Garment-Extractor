@@ -2,6 +2,9 @@
 
 This repository provides an automated pipeline to extract 3D garments (Gaussian Splats) from standard RGB images, configured for the TCML cluster environment.
 
+* **Stage 1 (Human3Diffusion):** Generates a full-body 3D mesh from a single 2D image using Singularity and `uv`.
+* **Stage 2 (CloSeNet):** Automatically segments the generated 3D human body and extracts specific clothing items into clean `.ply` meshes using Conda.
+
 ## Workflow Instructions
 
 ### 1. Resource Allocation
@@ -20,10 +23,21 @@ git clone [https://github.com/MaximHartmann/3D-Garment-Extractor.git](https://gi
 cd 3D-Garment-Extractor
 ```
 
+## 2a: Initialize Stage 1 (Human3Diffusion)
 Execute the setup script to initialize the virtual environment, compile necessary submodules, and download the required pre-trained models:
 
 ```bash
 ./setup.sh
+```
+
+## 2b: Initialize Stage 2 (CloSeNet)
+Create the isolated Conda environment for the segmentation model and download the pre-trained weights:
+
+```bash
+cd src/CloSe
+conda env create -f environment_close.yml
+wget -O pretrained/closenet.pth [https://github.com/anticdimi/CloSe/raw/main/pretrained/closenet.pth](https://github.com/anticdimi/CloSe/raw/main/pretrained/closenet.pth)
+cd ../..
 ```
 
 ### 3. Running Inference
@@ -34,6 +48,9 @@ Place your input images in the test_imgs/ folder. Execute the inference pipeline
 ```
 
 ### 4. Output
-Once the process is complete, you can find the generated 3D models (gs.ply) and corresponding renderings in the following directory:
+Once the process is complete, you will find the results in two locations:
+
+- Full Body Scans: output/test/tsdf-rgbd.ply
+- Extracted Garments: src/CloSe/out/demo_scan_out/ (Contains individual meshes like mesh_TShirt.ply, mesh_Pants.ply, etc.)
 
 output/test/
