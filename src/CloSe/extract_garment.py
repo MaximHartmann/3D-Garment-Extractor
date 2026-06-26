@@ -47,6 +47,9 @@ for lbl in gefundene_labels:
     valid_faces_mask = mask[original_faces].all(axis=1)
     extracted_faces = original_faces[valid_faces_mask]
     
+    if len(extracted_faces) == 0:
+        continue
+    
     mapping = np.full(len(mask), -1)
     mapping[mask] = np.arange(mask.sum())
     new_faces = mapping[extracted_faces]
@@ -58,8 +61,9 @@ for lbl in gefundene_labels:
         mesh = max(components, key=lambda c: len(c.faces))
     else:
         mesh = raw_mesh
-        
-    trimesh.smoothing.filter_laplacian(mesh, iterations=5)
+    
+    if len(mesh.faces) > 0:
+        trimesh.smoothing.filter_laplacian(mesh, iterations=5)
         
     out_name = f'out/demo_scan_out/mesh_{class_name}.ply'
     mesh.export(out_name)
