@@ -51,7 +51,16 @@ for lbl in gefundene_labels:
     mapping[mask] = np.arange(mask.sum())
     new_faces = mapping[extracted_faces]
     
-    mesh = trimesh.Trimesh(vertices=extracted_xyz, faces=new_faces, vertex_colors=extracted_rgb)
+    raw_mesh = trimesh.Trimesh(vertices=extracted_xyz, faces=new_faces, vertex_colors=extracted_rgb)
+    
+    components = raw_mesh.split(only_watertight=False)
+    if len(components) > 0:
+        mesh = max(components, key=lambda c: len(c.faces))
+    else:
+        mesh = raw_mesh
+        
+    trimesh.smoothing.filter_laplacian(mesh, iterations=5)
+        
     out_name = f'out/demo_scan_out/mesh_{class_name}.ply'
     mesh.export(out_name)
     print(f"3D-Mesh gespeichert: {out_name} ({len(extracted_xyz)} Punkte, {len(new_faces)} Flächen)")
