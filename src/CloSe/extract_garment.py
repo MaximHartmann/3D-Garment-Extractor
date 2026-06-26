@@ -37,34 +37,19 @@ for lbl in gefundene_labels:
     lbl_idx = int(lbl)
     class_name = LABEL2CLASS[lbl_idx] if lbl_idx < len(LABEL2CLASS) else f"Unknown_{lbl_idx}"
         
-    mask = (labels == lbl)
-    extracted_xyz = xyz[mask]
-    extracted_rgb = rgb[mask]
-    
-    if len(extracted_xyz) == 0:
-        continue
+    point_mask = (labels == lbl)
         
-    valid_faces_mask = mask[original_faces].all(axis=1)
-    extracted_faces = original_faces[valid_faces_mask]
+    faces_in_garment = point_mask[original_faces].sum(axis=1) >= 2
+    extracted_faces = original_faces[faces_in_garment]
     
     if len(extracted_faces) == 0:
         continue
     
-    mapping = np.full(len(mask), -1)
-    mapping[mask] = np.arange(mask.sum())
-    new_faces = mapping[extracted_faces]
+    mesh = trimesh.Trimesh(vertices=xyz, faces=extracted_faces, vertex_colors=rgb, process=False)
     
-    raw_mesh = trimesh.Trimesh(vertices=extracted_xyz, faces=new_faces, vertex_colors=extracted_rgb)
+    mesh.remove_unreferenced_vertices()
     
-    components = raw_mesh.split(only_watertight=False)
-    if len(components) > 0:
-        mesh = max(components, key=lambda c: len(c.faces))
-    else:
-        mesh = raw_mesh
-    
-    if len(mesh.faces) > 0:
-        trimesh.smoothing.filter_laplacian(mesh, iterations=5)
-        
     out_name = f'out/demo_scan_out/mesh_{class_name}.ply'
     mesh.export(out_name)
-    print(f"3D-Mesh gespeichert: {out_name} ({len(extracted_xyz)} Punkte, {len(new_faces)} Flächen)")
+    
+    print(f"3D-Mesh gespeichert: {out_name} ({len(mesh.vertices)} Punkte, {len(mesh.faces)} Flächen)")
