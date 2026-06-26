@@ -31,6 +31,16 @@ Execute the setup script to initialize the virtual environment, compile necessar
 ```
 
 ## 2b: Initialize Stage 2 (CloSeNet)
+
+Note: You need to install conda first: 
+```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+bash miniconda.sh -b -p $HOME/miniconda3
+~/miniconda3/bin/conda init
+rm miniconda.sh
+source ~/.bashrc
+```
+
 Create the isolated Conda environment for the segmentation model and download the pre-trained weights:
 
 ```bash
